@@ -1,0 +1,35 @@
+# .github/workflows/build.yml
+name: Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Compile
+        id: compile
+        uses: rust-build/rust-build.action@v1.4.4
+        with:
+          RUSTTARGET: x86_64-pc-windows-gnu
+          UPLOAD_MODE: release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: clicker-rs.exe
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/release/clicker-rs.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
