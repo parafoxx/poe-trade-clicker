@@ -1,0 +1,12 @@
+[package]
+name = "clicker-rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ctrlc = "3.4.0"
+enigo = "0.1.2"
+hotkey = "0.3.1"
+rdev = {version="0.5.3", features=["unstable_grab"]}

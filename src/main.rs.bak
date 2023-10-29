@@ -1,0 +1,53 @@
+use enigo::*;
+
+fn main() {
+
+    println!("running clicker-rs...");
+
+    fn do_shit2() {
+        let left_start = 1296;
+        let up_start = 614;
+        let cell_size = 53;
+        let mut enigo = Enigo::new();
+        println!("Hotkey Triggered!");
+        let old_pos = enigo.mouse_location();
+
+        if (1260, 580) > old_pos || old_pos > (1920, 890) {
+            println!("Cursor out of safe range.. Ignoring");
+            return;
+        }
+        enigo.mouse_move_to(left_start,up_start);
+        std::thread::sleep(core::time::Duration::from_millis(50));
+        enigo.key_down(Key::Control);
+        for i in 0..12 {
+            for j in 0..5 {
+                enigo.mouse_click(MouseButton::Left);
+                std::thread::sleep( core::time::Duration::from_millis(10));
+                enigo.mouse_move_to(left_start+cell_size*i,up_start+cell_size*j);
+                std::thread::sleep( core::time::Duration::from_millis(30));
+                let new_pos = enigo.mouse_location();
+
+                if new_pos.0+(cell_size/2) > old_pos.0 && new_pos.1+ (cell_size/2) > old_pos.1 {
+                    enigo.mouse_click(MouseButton::Left);
+                    std::thread::sleep( core::time::Duration::from_millis(10));
+                    enigo.key_up(Key::Control);
+                    println!("Hotkey DONE!");
+                    enigo.mouse_move_to(old_pos.0,old_pos.1);
+                    return;
+                }
+            }
+        }
+
+    }
+
+    let mut hk = hotkey::Listener::new();
+    hk.register_hotkey(
+         hotkey::modifiers::SHIFT,
+        'T' as u32,
+         do_shit2,
+    )
+    .unwrap();
+    
+    hk.listen();
+
+}
